@@ -1,0 +1,280 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Agile Board</title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+<style>
+div.item {
+	border: 1px solid #ddd;
+	margin-bottom: 1em;
+}
+div.container {
+	width: 100%;
+}
+.item .description.expand {
+	max-height: 20em;
+	overflow-y: auto;
+}
+.item .description.shrink {
+	max-height: 1.5em;
+	overflow-y: hidden;
+}
+</style>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/knockout-3.0.0.js"></script>
+</head>
+<body id="app">
+		<div class="container navbar navbar navbar-fixed-top" role="navigation" style="background-color: #eee; border-bottom: 1px solid black;">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only"></span>
+						<span class="icon-bar">Test</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Agile Board</a>
+				</div>
+
+				<ul class="nav navbar-nav">
+					<li>
+						<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="future">Future</a>
+					</li><li>
+						<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="horizon">Horizon</a>
+					</li><li>
+						<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="active">Active</a>
+					</li><li>
+						<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="valid">Valid</a>
+					</li><li>
+						<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="completed">Completed</a>
+					</li><li>
+						<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="discarded">Discarded</a>
+					<!-- </li><li style="padding-top: 1em;">
+						<button id="load" type="button" class="btn btn-default btn-xs" data-bind="click: load">Load</button> -->
+					</li><li style="padding-top: 1em;">
+						<button id="save" type="button" class="btn btn-primary btn-xs" data-bind="click: save">Save</button>
+					</li>
+				</ul>
+			</div>
+		</div>
+	
+	<div class="container" style="margin-top: 80px;">
+		<div class="row">
+			<div class="col-md-6 col-lg-4" data-bind="visible: horizon().visible">
+				<h2 data-bind="text: horizon().title"></h2>
+				<div id="hlog" class="log" data-bind="foreach: horizon().items">
+						<div class="container item">
+							<div class="row">
+								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>
+								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
+								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+										<span class="glyphicon glyphicon-move" title="Move to another log">    
+										</span> <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#">Active</a></li>
+										<li><a href="#">Horizon</a></li>
+										<li><a href="#">Valid</a></li>
+										<li><a href="#">Completed</a></li>
+										<li><a href="#">Future</a></li>
+										<li><a href="#">Discarded</a></li>
+									</ul>
+								</div>
+								<button type="button" class="btn btn-default btn-xs" data-bind=""><span class="glyphicon glyphicon-resize-full" title="Expand" data-bind="click: expand"></span></button>
+								<button type="button" class="btn btn-default btn-xs" data-bind=""><span class="glyphicon glyphicon-resize-small" title="Shrink" data-bind="click: shrink"></span></button>
+							</div>
+							<div class="row">
+								<div class="col-md-12 title" data-bind="text: title">.title</div>
+								<div class="col-md-6 priority" data-bind=""><span class="badge">.priority .badge</span> </div>
+								<div class="col-md-6 duedate" data-bind="">.duedate</div>
+								<div class="col-md-10 col-sm-10 link"><a data-bind="">.link a</a></div>
+								<div class="col-md-1">
+									<div class="btn-group">
+										<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+											<span class="glyphicon glyphicon-random" title="Related items">
+											</span> <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" role="menu">
+											<li><a href="#">Title/Priority/duedate</a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="col-md-12 tags">
+									<span class="badge tag">.tags .tag</span>
+								</div>
+								<div class="col-md-12 description shrink"><strong>Description:</strong> <span class="content" data-bind="html: description">Description Content.....</span></div>
+							</div>
+						</div>
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4" data-bind="with: active(), visible: active().visible">
+				<h2>Active Log</h2>
+				<p>Items that are currently being worked on.</p>
+				<div id="alog" class="log" data-bind="foreach:items">
+				</div>
+			 </div>
+			<div class="col-md-6 col-lg-4" data-bind="with: valid(), visible: valid().visible">
+				<h2>Valid Log</h2>
+				<p>Items that need validated by the end user.</p>
+				<div id="vlog" class="log" data-bind="foreach:items"></div>
+			</div>
+			<div class="col-md-6 col-lg-4" data-bind="with: future(), visible: future().visible">
+				<h2>Future Log</h2>
+				<p>Items that need to be worked on in the far future. </p>
+				<div id="hlog" class="log" data-bind="foreach:items">
+				</div>
+			</div>
+			<div class="col-md-6 col-lg-4" data-bind="with: completed(), visible: completed().visible">
+				<h2>Completed Log</h2>
+				<p>Items that are completd on.</p>
+				<div id="alog" class="log" data-bind="foreach:items"></div>
+			 </div>
+			<div class="col-md-6 col-lg-4" data-bind="with: discarded(), visible: discarded().visible">
+				<h2>Discarded Log</h2>
+				<p>Items that have been discarded.</p>
+				<div id="vlog" class="log" data-bind="foreach:items"></div>
+			</div>
+		</div>
+
+		<hr>
+
+		<footer>
+			<p>Agile Board</p>
+		</footer>
+	</div>
+<script>
+tagViewModel = function( v ) {
+	var self = this;
+	if( typeof v == 'undefined') { v = {}; };
+	self.title = ko.observable( typeof v.title == 'string' ? v.title : '' );
+}
+
+itemViewModel = function( v ) {
+	var self = this;
+	if( typeof v == 'undefined') { v = {}; };
+	self.id = typeof v.id == "number" ? v.id : 0;
+	self.rank = ko.observable( typeof v.rank == "string" ? v.rank : '' );
+	self.title = ko.observable( typeof v.title == "string" ? v.title : '' );
+	self.duedate = ko.observable( typeof v.duedate == "string" ? v.duedate : '' );
+	self.priority = ko.observable( typeof v.priority == "string" ? v.priority : '' );
+	self.link = ko.observable( typeof v.link == "string" ? v.link : '' );
+	self.description = ko.observable( typeof v.description == "string" ? v.description : '' );
+	self.tags = ko.observableArray( typeof v.tags == "object" ? v.tags : [] );
+	if( typeof v.tags == 'object' ) {
+		for( var i=0; i < v.tags.length; i++ ) {
+			self.tags.push( new tagViewModel( v.tags[ i ] ) );
+		}
+	}
+
+	self.expand = function( a, b ) {
+		$( b.currentTarget ).closest(".item").find(".description").addClass("expand").removeClass("shrink");
+	}
+	self.shrink = function( a, b ) {
+		$( b.currentTarget ).closest(".item").find(".description").addClass("shrink").removeClass("expand");
+	}
+
+};
+
+logViewModel = function( v ) {
+	var self = this;
+	if( typeof v == 'undefined') { v = {}; };
+	self.title = ko.observable( typeof v.title == 'string' ? v.title : '' );
+	self.description = ko.observable( typeof v.desc == 'string' ? v.desc : '' );
+	self.visible = ko.observable( typeof v.visible == 'boolean' ? v.visible : false );
+	self.items = ko.observableArray( [] );
+	if( typeof v.items == 'object' ) {
+		for( var i=0; i < v.items.length; i++ ) {
+			self.items.push( new itemViewModel( v.items[ i ] ) );
+		}
+	}
+};
+
+appViewModel = function( v ) {
+	var self = this;
+	if( typeof v == 'undefined') { v = {}; };
+	self.active = ko.observable( new logViewModel( typeof v.active == 'object' ? v.active : undefined ) );
+	self.horizon = ko.observable( new logViewModel( typeof v.horizon == 'object' ? v.horizon: undefined ) );
+	self.future = ko.observable( new logViewModel(typeof v.future == 'object' ? v.future : undefined ) );
+	self.completed = ko.observable( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
+	self.discarded = ko.observable( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
+	self.valid = ko.observable( new logViewModel( typeof v.valid == 'object' ? v.valid : {} ) );
+	self.toggleBoard = function( e, d ) {
+		console.log( e );
+		console.log( $(d).data('log') );
+		var alog = this[$(d.currentTarget).data("log")]();
+		alog.visible( alog.visible() ? false : true );
+	}
+
+	self.save = function() {
+		localStorage.setItem('agileboard', ko.toJSON( self ) );
+	}
+
+	self.load = function() {
+		var v = JSON.parse( localStorage.getItem('agileboard') );
+		self.active( new logViewModel( typeof v.active == 'object' ? v.active : undefined ) );
+		self.horizon( new logViewModel( typeof v.horizon == 'object' ? v.horizon: undefined ) );
+		self.future( new logViewModel( typeof v.future == 'object' ? v.future : undefined ) );
+		self.completed( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
+		self.discarded( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
+		self.valid( new logViewModel( typeof v.valid == 'object' ? v.valid : undefined ) );
+	}
+};
+
+
+config = {
+	"horizon": {
+		"title": "Horizon",
+		"desc": "Task that will be started in the near future.",
+		"visible": true
+	},
+	"active": {
+		"title": "Active",
+		"desc": "Tasks that are currently being worked on.",
+		"visible": true	
+	},
+	"valid": {
+		"title": "Valid",
+		"desc": "Completed tasks that the customer needs to verify.",
+		"visible": true
+	},
+	"future": {
+		"title": "Future",
+		"desc": "Tasks that will need to be done in the future but not the immediate future.",
+		"visible": false
+	},
+	"completed": {
+		"title": "Completed",
+		"desc": "Tasks that have been completed and verified.",
+		"visible": false
+	},
+	"discarded": {
+		"title": "Discarded",
+		"desc": "Tasks that have been discarded but not yet deleted. Kept for historical purpose or because they may appear again.",
+		"visible": false
+	}
+}
+
+$(document).ready( function() {
+	var logs = $(".log");
+	for( i=1; i < logs.length; i++ ) { 
+		$(logs[i]).html( $(logs[0]).html() ); 
+	}
+
+	app = new appViewModel( config );
+	//Sample item
+	// app.horizon().items.push( new itemViewModel() )
+	// app.future().items.push( new itemViewModel() )
+	// app.discarded().items.push( new itemViewModel() )
+	// app.active().items.push( new itemViewModel() )
+	// app.valid().items.push( new itemViewModel() )
+	// app.completed().items.push( new itemViewModel() )
+
+	ko.applyBindings( app );
+	app.load();
+});
+</script>
+</body></html>
