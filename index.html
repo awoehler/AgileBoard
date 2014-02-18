@@ -69,6 +69,8 @@ div.container {
 								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>
 								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
 								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+		<div class="" data-bind="visible: horizon().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1} ">
+			<h2 data-bind="text: horizon().title"></h2>
 								<div class="btn-group">
 									<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
 										<span class="glyphicon glyphicon-move" title="Move to another log">    
@@ -126,18 +128,34 @@ div.container {
 				<p>Items that need to be worked on in the far future. </p>
 				<div id="hlog" class="log" data-bind="foreach:items">
 				</div>
+		<div class="" data-bind="with: active(), visible: active().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
+			<h2>Active Log</h2>
+			<p>Items that are currently being worked on.</p>
+			<div id="alog" class="log" data-bind="foreach:items">
 			</div>
-			<div class="col-md-6 col-lg-4" data-bind="with: completed(), visible: completed().visible">
-				<h2>Completed Log</h2>
-				<p>Items that are completd on.</p>
-				<div id="alog" class="log" data-bind="foreach:items"></div>
-			 </div>
-			<div class="col-md-6 col-lg-4" data-bind="with: discarded(), visible: discarded().visible">
-				<h2>Discarded Log</h2>
-				<p>Items that have been discarded.</p>
-				<div id="vlog" class="log" data-bind="foreach:items"></div>
+		 </div>
+		<div class="" data-bind="with: valid(), visible: valid().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
+			<h2>Valid Log</h2>
+			<p>Items that need validated by the end user.</p>
+			<div id="vlog" class="log" data-bind="foreach:items"></div>
+		</div>
+		<div class="" data-bind="with: future(), visible: future().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
+			<h2>Future Log</h2>
+			<p>Items that need to be worked on in the far future. </p>
+			<div id="hlog" class="log" data-bind="foreach:items">
 			</div>
 		</div>
+		<div class="" data-bind="with: completed(), visible: completed().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
+			<h2>Completed Log</h2>
+			<p>Items that are completd on.</p>
+			<div id="alog" class="log" data-bind="foreach:items"></div>
+		 </div>
+		<div class="" data-bind="with: discarded(), visible: discarded().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
+			<h2>Discarded Log</h2>
+			<p>Items that have been discarded.</p>
+			<div id="vlog" class="log" data-bind="foreach:items"></div>
+		</div>
+	</div>
 
 		<hr>
 
@@ -201,6 +219,16 @@ appViewModel = function( v ) {
 	self.completed = ko.observable( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
 	self.discarded = ko.observable( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
 	self.valid = ko.observable( new logViewModel( typeof v.valid == 'object' ? v.valid : {} ) );
+	self.activeLogs = ko.computed( function() {
+		var i=0; 
+		i += self.active().visible() ? 1 : 0;
+		i += self.horizon().visible() ? 1 : 0;
+		i += self.future().visible() ? 1 : 0;
+		i += self.discarded().visible() ? 1 : 0;
+		i += self.completed().visible() ? 1 : 0;
+		i += self.valid().visible() ? 1 : 0;
+		return i;
+	});
 	self.toggleBoard = function( e, d ) {
 		console.log( e );
 		console.log( $(d).data('log') );
