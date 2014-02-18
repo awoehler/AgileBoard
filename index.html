@@ -141,12 +141,58 @@ div.container {
 		</div>
 	</div>
 
-		<hr>
+	<hr>
 
-		<footer>
-			<p>Agile Board</p>
-		</footer>
-	</div>
+	<footer>
+		<p>Agile Board</p>
+	</footer>
+</div>
+<div id="editStory" class="modal fade" role="dialog" tabindex="-1" class="modal fade" aria-labelledby="editStory" aria-hidden="true" data-bind="with: activeItem()">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit Story:</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="form-group">
+						<input type="text" name="title" class="form-control" placeholder="Title" data-bind="value: title">
+					</div>
+					<div class="form-group">
+						<input type="datetime" name="duedate" class="form-control" >
+					</div>
+					<div class="form-group">
+						<input type="text" name="priority" class="form-control" placeholder="Priority" data-bind="value: priority">
+					</div>
+					<div class="form-group">
+						<input type="url" name="link" class="form-control" placeholder="http://" data-bind="value: link">
+					</div>
+					<div class="form-group">
+
+						<input type="text" name="tags" class="form-control" placeholder="Example,tags" data-bind="">
+					</div>
+					<div class="form-group">
+						<textarea name="description" class="form-control" placeholder="Description" data-bind="value: description"></textarea>
+					</div>
+				</form>				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="deleteStory">
+</div>
+
+
+
+
+
+
 <script>
 tagViewModel = function( v ) {
 	var self = this;
@@ -169,11 +215,20 @@ itemViewModel = function( v ) {
 		for( var i=0; i < v.tags.length; i++ ) {
 			self.tags.push( new tagViewModel( v.tags[ i ] ) );
 		}
-	}
+	};
+
+	self.addTag = function( n ) {
+
+	};
+
+	self.removeTag = function( n ) {
+
+	};
 
 	self.expand = function( a, b ) {
 		$( b.currentTarget ).closest(".item").find(".description").addClass("expand").removeClass("shrink");
-	}
+	};
+
 	self.shrink = function( a, b ) {
 		$( b.currentTarget ).closest(".item").find(".description").addClass("shrink").removeClass("expand");
 	}
@@ -197,6 +252,7 @@ logViewModel = function( v ) {
 appViewModel = function( v ) {
 	var self = this;
 	if( typeof v == 'undefined') { v = {}; };
+	self.activeItem = ko.observable( new itemViewModel() );
 	self.active = ko.observable( new logViewModel( typeof v.active == 'object' ? v.active : undefined ) );
 	self.horizon = ko.observable( new logViewModel( typeof v.horizon == 'object' ? v.horizon: undefined ) );
 	self.future = ko.observable( new logViewModel(typeof v.future == 'object' ? v.future : undefined ) );
@@ -214,8 +270,6 @@ appViewModel = function( v ) {
 		return i;
 	});
 	self.toggleBoard = function( e, d ) {
-		console.log( e );
-		console.log( $(d).data('log') );
 		var alog = this[$(d.currentTarget).data("log")]();
 		alog.visible( alog.visible() ? false : true );
 	}
@@ -232,6 +286,15 @@ appViewModel = function( v ) {
 		self.completed( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
 		self.discarded( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
 		self.valid( new logViewModel( typeof v.valid == 'object' ? v.valid : undefined ) );
+	}
+
+	self.editStory = function( e ) {
+		t = self.activeItem();
+		t.title( e.title() );
+		$("#editStory").modal();
+	}
+
+	self.viewStory = function( e ) {
 	}
 };
 
