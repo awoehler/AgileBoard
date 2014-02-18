@@ -58,76 +58,60 @@ div.container {
 				</li>
 			</ul>
 		</div>
-	
-	<div class="container" style="margin-top: 80px;">
-		<div class="row">
-			<div class="col-md-6 col-lg-4" data-bind="visible: horizon().visible">
-				<h2 data-bind="text: horizon().title"></h2>
-				<div id="hlog" class="log" data-bind="foreach: horizon().items">
-						<div class="container item">
-							<div class="row">
-								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-info-sign"></span></button>
-								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></button>
-								<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-trash"></span></button>
+	</div>
+
+<div class="container" style="margin-top: 80px;">
+	<div class="row">
 		<div class="" data-bind="visible: horizon().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1} ">
 			<h2 data-bind="text: horizon().title"></h2>
+			<div id="hlog" class="log" data-bind="foreach: horizon().items">
+					<div class="container item">
+						<div class="row">
+							<button type="button" class="btn btn-default btn-xs" title="View Story" data-bind="click: $root.viewStory"><span class="glyphicon glyphicon-info-sign"></span></button>&nbsp;
+							<button type="button" class="btn btn-default btn-xs" title="Edit Story" data-bind="click: $root.editStory"><span class="glyphicon glyphicon-edit"></span></button>&nbsp;
+							<!-- <button type="button" class="btn btn-default btn-xs" title="Move to Discarded"><span class="glyphicon glyphicon-trash"></span></button> -->
+							<div class="btn-group">
+								<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="Move to another log.">
+									<span class="glyphicon glyphicon-move" title="Move to another log">    
+									</span> <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="#">Active</a></li>
+									<li><a href="#">Horizon</a></li>
+									<li><a href="#">Valid</a></li>
+									<li><a href="#">Completed</a></li>
+									<li><a href="#">Future</a></li>
+									<li><a href="#">Discarded</a></li>
+								</ul>
+							</div>&nbsp;
+							<button type="button" class="btn btn-default btn-xs" data-bind="" title="Expand"><span class="glyphicon glyphicon-resize-full" title="Expand" data-bind="click: expand"></span></button>&nbsp;
+							<button type="button" class="btn btn-default btn-xs" data-bind="" title="Collapse"><span class="glyphicon glyphicon-resize-small" title="Shrink" data-bind="click: shrink"></span></button>&nbsp;
+						</div>
+						<div class="row">
+							<div class="col-md-12 title" data-bind="text: title">.title</div>
+							<div class="col-md-6 priority" data-bind=""><span class="badge">.priority .badge</span> </div>
+							<div class="col-md-6 duedate" data-bind="">.duedate</div>
+							<div class="col-md-10 col-sm-10 link"><a data-bind="">.link a</a></div>
+							<div class="col-md-1">
 								<div class="btn-group">
-									<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-										<span class="glyphicon glyphicon-move" title="Move to another log">    
-										</span> <span class="caret"></span>
+									<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="Related items">
+										
+										<span class="glyphicon glyphicon-random"></span>
+										<span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu" role="menu">
-										<li><a href="#">Active</a></li>
-										<li><a href="#">Horizon</a></li>
-										<li><a href="#">Valid</a></li>
-										<li><a href="#">Completed</a></li>
-										<li><a href="#">Future</a></li>
-										<li><a href="#">Discarded</a></li>
+										<li><a href="#">Title/Priority/duedate</a></li>
 									</ul>
 								</div>
-								<button type="button" class="btn btn-default btn-xs" data-bind=""><span class="glyphicon glyphicon-resize-full" title="Expand" data-bind="click: expand"></span></button>
-								<button type="button" class="btn btn-default btn-xs" data-bind=""><span class="glyphicon glyphicon-resize-small" title="Shrink" data-bind="click: shrink"></span></button>
 							</div>
-							<div class="row">
-								<div class="col-md-12 title" data-bind="text: title">.title</div>
-								<div class="col-md-6 priority" data-bind=""><span class="badge">.priority .badge</span> </div>
-								<div class="col-md-6 duedate" data-bind="">.duedate</div>
-								<div class="col-md-10 col-sm-10 link"><a data-bind="">.link a</a></div>
-								<div class="col-md-1">
-									<div class="btn-group">
-										<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-											<span class="glyphicon glyphicon-random" title="Related items">
-											</span> <span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu" role="menu">
-											<li><a href="#">Title/Priority/duedate</a></li>
-										</ul>
-									</div>
-								</div>
-								<div class="col-md-12 tags">
-									<span class="badge tag">.tags .tag</span>
-								</div>
-								<div class="col-md-12 description shrink"><strong>Description:</strong> <span class="content" data-bind="html: description">Description Content.....</span></div>
+							<div class="col-md-12 tags">
+								<span class="badge tag">.tags .tag</span>
 							</div>
+							<div class="col-md-12 description shrink"><strong>Description:</strong> <span class="content" data-bind="html: description">Description Content.....</span></div>
 						</div>
-				</div>
+					</div>
 			</div>
-			<div class="col-md-6 col-lg-4" data-bind="with: active(), visible: active().visible">
-				<h2>Active Log</h2>
-				<p>Items that are currently being worked on.</p>
-				<div id="alog" class="log" data-bind="foreach:items">
-				</div>
-			 </div>
-			<div class="col-md-6 col-lg-4" data-bind="with: valid(), visible: valid().visible">
-				<h2>Valid Log</h2>
-				<p>Items that need validated by the end user.</p>
-				<div id="vlog" class="log" data-bind="foreach:items"></div>
-			</div>
-			<div class="col-md-6 col-lg-4" data-bind="with: future(), visible: future().visible">
-				<h2>Future Log</h2>
-				<p>Items that need to be worked on in the far future. </p>
-				<div id="hlog" class="log" data-bind="foreach:items">
-				</div>
+		</div>
 		<div class="" data-bind="with: active(), visible: active().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
 			<h2>Active Log</h2>
 			<p>Items that are currently being worked on.</p>
@@ -302,6 +286,7 @@ $(document).ready( function() {
 
 	ko.applyBindings( app );
 	app.load();
+	$("button[title]").tooltip();
 });
 </script>
 </body></html>
