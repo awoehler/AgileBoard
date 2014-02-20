@@ -20,78 +20,91 @@ div.container {
 	max-height: 1.5em;
 	overflow-y: hidden;
 }
+textarea[name=description] {
+	width: 588px;
+	max-width: 588px;
+	min-height: 150px;
+}
+#appmenu {
+	max-height: 100px;
+	overflow-y: auto;
+}
+.item .title {
+	background-color: #eee;
+	padding-top: 0.2em;
+	padding-bottom: 0.1em;
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.item .description {
+	font-size: 0.8em;
+}
 </style>
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/knockout-3.0.0.js"></script>
 </head>
 <body id="app">
-	<div class="container navbar navbar navbar-fixed-top" role="navigation" style="background-color: #eee; border-bottom: 1px solid black;">
+	<div id="appmenu" class="container navbar navbar navbar-fixed-top" role="navigation" style="background-color: #eee; border-bottom: 1px solid black;">
 		<div class="container">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 					<span class="sr-only"></span>
-					<span class="icon-bar">Test</span>
+					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" href="#">Agile Board</a>
 			</div>
 
-			<ul class="nav navbar-nav">
-				<li>
-					<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="future">Future</a>
-				</li><li>
-					<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="horizon">Horizon</a>
-				</li><li>
-					<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="active">Active</a>
-				</li><li>
-					<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="valid">Valid</a>
-				</li><li>
-					<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="completed">Completed</a>
-				</li><li>
-					<a class="btn btn-xs" title="Show/Hide this log" data-bind="click: toggleBoard" data-log="discarded">Discarded</a>
-				<!-- </li><li style="padding-top: 1em;">
-					<button id="load" type="button" class="btn btn-default btn-xs" data-bind="click: load">Load</button> -->
-				</li><li style="padding-top: 1em;">
-					<button id="save" type="button" class="btn btn-primary btn-xs" data-bind="click: save">Save</button>
-				</li>
+			<ul class="nav navbar-nav" data-bind="foreach: logs()">
+				<li><a class="btn btn-xs" title="Show/Hide this log" data-bind="click: $parent.toggleBoard, text: title() "></a></li>
 			</ul>
 		</div>
 	</div>
 
-<div class="container" style="margin-top: 80px;">
-	<div class="row">
-		<div class="" data-bind="visible: horizon().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1} ">
-			<h2 data-bind="text: horizon().title"></h2>
-			<div id="hlog" class="log" data-bind="foreach: horizon().items">
+<div id="logs" class="container" style="margin-top: 80px;">
+	<div class="row" data-bind="foreach: logs()">
+		<div class="" data-bind="visible: visible, css: { 'col-md-2': $parent.activeLogs() > 4, 'col-md-3': $parent.activeLogs() == 4, 'col-md-4': $parent.activeLogs() == 3, 'col-md-6': $parent.activeLogs() == 2, 'col-md-12': $parent.activeLogs() == 1} ">
+			<h2>
+				<span data-bind="text: title"></span> 
+				<button data-bind="click: addItem" title="Add a new item to this log" type="button" class="btn btn-default btn-mini"> <span class="glyphicon glyphicon-plus"></span></button>
+			</h2>
+			<p data-bind="text: description"></p>
+			<div id="hlog" class="items" data-bind="attr{ 'data-id': id() }, foreach: items">
+				<div class="items">
 					<div class="container item">
 						<div class="row">
-							<button type="button" class="btn btn-default btn-xs" title="View Story" data-bind="click: $root.viewStory"><span class="glyphicon glyphicon-info-sign"></span></button>&nbsp;
-							<button type="button" class="btn btn-default btn-xs" title="Edit Story" data-bind="click: $root.editStory"><span class="glyphicon glyphicon-edit"></span></button>&nbsp;
+							<div class="col-md-12 title" data-bind="text: title">.title</div>
+						</div>
+						<div class="row">
+							<button type="button" class="btn btn-default btn-xs" title="View Story" data-bind="click: $parent.viewItem"><span class="glyphicon glyphicon-info-sign"></span></button>&nbsp;
+							<button type="button" class="btn btn-default btn-xs" title="Edit Story" data-bind="click: $parent.editItem"><span class="glyphicon glyphicon-edit"></span></button>&nbsp;
 							<!-- <button type="button" class="btn btn-default btn-xs" title="Move to Discarded"><span class="glyphicon glyphicon-trash"></span></button> -->
 							<div class="btn-group">
 								<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="Move to another log.">
-									<span class="glyphicon glyphicon-move" title="Move to another log">    
+									<span class="glyphicon glyphicon-transfer" title="Move to another log">    
 									</span> <span class="caret"></span>
 								</button>
 								<ul class="dropdown-menu" role="menu">
-									<li><a href="#">Active</a></li>
-									<li><a href="#">Horizon</a></li>
-									<li><a href="#">Valid</a></li>
-									<li><a href="#">Completed</a></li>
-									<li><a href="#">Future</a></li>
-									<li><a href="#">Discarded</a></li>
+									<li><a href="#" data-moveto="active" data-bind="click: $parent.moveItem">Active</a></li>
+									<li><a href="#" data-moveto="horizon" data-bind="click: $parent.moveItem">Horizon</a></li>
+									<li><a href="#" data-moveto="valid" data-bind="click: $parent.moveItem">Valid</a></li>
+									<li><a href="#" data-moveto="completed" data-bind="click: $parent.moveItem">Completed</a></li>
+									<li><a href="#" data-moveto="future" data-bind="click: $parent.moveItem">Future</a></li>
+									<!-- <li><a href="#" data-id="discarded" data-bind="click: $parent.moveItem">Discarded</a></li> -->
 								</ul>
 							</div>&nbsp;
-							<button type="button" class="btn btn-default btn-xs" data-bind="" title="Expand"><span class="glyphicon glyphicon-resize-full" title="Expand" data-bind="click: expand"></span></button>&nbsp;
-							<button type="button" class="btn btn-default btn-xs" data-bind="" title="Collapse"><span class="glyphicon glyphicon-resize-small" title="Shrink" data-bind="click: shrink"></span></button>&nbsp;
+							<button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.expand" title="Expand"><span class="glyphicon glyphicon-resize-full" title="Expand" ></span></button>&nbsp;
+							<button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.shrink" title="Collapse"><span class="glyphicon glyphicon-resize-small" title="Shrink" ></span></button>&nbsp;
+							<button type="button" class="btn btn-default btn-xs" data-moveto="discarded" data-bind="click: $parent.moveItem" title="Collapse"><span class="glyphicon glyphicon-trash" title="Move to Discarded" ></span></button>&nbsp;
 						</div>
 						<div class="row">
-							<div class="col-md-12 title" data-bind="text: title">.title</div>
-							<div class="col-md-6 priority" data-bind=""><span class="badge">.priority .badge</span> </div>
-							<div class="col-md-6 duedate" data-bind="">.duedate</div>
-							<div class="col-md-10 col-sm-10 link"><a data-bind="">.link a</a></div>
+							<div class="col-md-6 priority">
+								<span class="label label-default" data-bind="text: priority, css: { 'label-danger' : priority().toLowerCase() == 'high', 'label-success' : priority().toLowerCase() == 'normal', 'label-info' : priority().toLowerCase() == 'low'}">.priority .badge</span> 
+							</div>
+							<div class="col-md-6 duedate" data-bind="text: duedate" data-toggle="tooltip" title="Due Date">.duedate</div>
+							<div class="col-md-10 col-sm-10 link"><a data-bind="text: link, attr: { 'href': link }">.link a</a></div>
 							<div class="col-md-1">
 								<div class="btn-group">
 									<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="Related items">
@@ -104,48 +117,25 @@ div.container {
 									</ul>
 								</div>
 							</div>
-							<div class="col-md-12 tags">
-								<span class="badge tag">.tags .tag</span>
+							<div class="col-md-12 tags" data-bind="foreach: tags()">
+								<span class="badge tag" data-bind="text: $data">.tags .tag</span>
 							</div>
 							<div class="col-md-12 description shrink"><strong>Description:</strong> <span class="content" data-bind="html: description">Description Content.....</span></div>
 						</div>
 					</div>
+				</div>
 			</div>
-		</div>
-		<div class="" data-bind="with: active(), visible: active().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
-			<h2>Active Log</h2>
-			<p>Items that are currently being worked on.</p>
-			<div id="alog" class="log" data-bind="foreach:items">
-			</div>
-		 </div>
-		<div class="" data-bind="with: valid(), visible: valid().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
-			<h2>Valid Log</h2>
-			<p>Items that need validated by the end user.</p>
-			<div id="vlog" class="log" data-bind="foreach:items"></div>
-		</div>
-		<div class="" data-bind="with: future(), visible: future().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
-			<h2>Future Log</h2>
-			<p>Items that need to be worked on in the far future. </p>
-			<div id="hlog" class="log" data-bind="foreach:items">
-			</div>
-		</div>
-		<div class="" data-bind="with: completed(), visible: completed().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
-			<h2>Completed Log</h2>
-			<p>Items that are completd on.</p>
-			<div id="alog" class="log" data-bind="foreach:items"></div>
-		 </div>
-		<div class="" data-bind="with: discarded(), visible: discarded().visible, css: { 'col-md-2': activeLogs() > 4, 'col-md-3': activeLogs() == 4, 'col-md-4': activeLogs() == 3, 'col-md-6': activeLogs() == 2, 'col-md-12': activeLogs() == 1}">
-			<h2>Discarded Log</h2>
-			<p>Items that have been discarded.</p>
-			<div id="vlog" class="log" data-bind="foreach:items"></div>
 		</div>
 	</div>
 
 	<hr>
 
 	<footer>
-		<p>Agile Board</p>
+		<p><a href="https://github.com/awoehler/AgileBoard" target="_blank">Agile Board</a></p>
 	</footer>
+</div>
+<div class="templates" style="display: none;">
+
 </div>
 <div id="editStory" class="modal fade" role="dialog" tabindex="-1" class="modal fade" aria-labelledby="editStory" aria-hidden="true" data-bind="with: activeItem()">
 	<div class="modal-dialog">
@@ -160,17 +150,17 @@ div.container {
 						<input type="text" name="title" class="form-control" placeholder="Title" data-bind="value: title">
 					</div>
 					<div class="form-group">
-						<input type="datetime" name="duedate" class="form-control" >
+						<input type="date" name="duedate" class="form-control" data-bind="value: duedate">
 					</div>
 					<div class="form-group">
-						<input type="text" name="priority" class="form-control" placeholder="Priority" data-bind="value: priority">
+						<input type="text" name="priority" class="form-control" placeholder="Low, Normal, High" data-bind="value: priority">
 					</div>
 					<div class="form-group">
-						<input type="url" name="link" class="form-control" placeholder="http://" data-bind="value: link">
+						<input type="url" name="link" class="form-control" placeholder="http://www.site.com" data-bind="value: link">
 					</div>
 					<div class="form-group">
 
-						<input type="text" name="tags" class="form-control" placeholder="Example,tags" data-bind="">
+						<input type="text" name="tags" class="form-control" placeholder="Example,tags" data-bind="value: tags_input">
 					</div>
 					<div class="form-group">
 						<textarea name="description" class="form-control" placeholder="Description" data-bind="value: description"></textarea>
@@ -179,7 +169,6 @@ div.container {
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Save changes</button>
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
@@ -187,11 +176,6 @@ div.container {
 
 <div id="deleteStory">
 </div>
-
-
-
-
-
 
 <script>
 tagViewModel = function( v ) {
@@ -210,36 +194,37 @@ itemViewModel = function( v ) {
 	self.priority = ko.observable( typeof v.priority == "string" ? v.priority : '' );
 	self.link = ko.observable( typeof v.link == "string" ? v.link : '' );
 	self.description = ko.observable( typeof v.description == "string" ? v.description : '' );
-	self.tags = ko.observableArray( typeof v.tags == "object" ? v.tags : [] );
+	self.tags = ko.observableArray( [] );
+	self.expanded = ko.observable( false );
+
+	self.tags_input = ko.computed( {
+		read: function() {
+			return self.tags().join(',');
+		},
+		write: function( value) {
+			self.tags.removeAll();
+			var newtags = value.split(",");
+			for( var i=0; i < newtags.length; i++ ) {
+				self.tags.push( newtags[i] );
+			}
+		},
+		owner: this
+	})
+
 	if( typeof v.tags == 'object' ) {
 		for( var i=0; i < v.tags.length; i++ ) {
-			self.tags.push( new tagViewModel( v.tags[ i ] ) );
+			self.tags.push( v.tags[ i ] );
 		}
 	};
-
-	self.addTag = function( n ) {
-
-	};
-
-	self.removeTag = function( n ) {
-
-	};
-
-	self.expand = function( a, b ) {
-		$( b.currentTarget ).closest(".item").find(".description").addClass("expand").removeClass("shrink");
-	};
-
-	self.shrink = function( a, b ) {
-		$( b.currentTarget ).closest(".item").find(".description").addClass("shrink").removeClass("expand");
-	}
 
 };
 
 logViewModel = function( v ) {
 	var self = this;
 	if( typeof v == 'undefined') { v = {}; };
+	self.id = ko.observable( typeof v.id == 'string' ? v.id : '' );
 	self.title = ko.observable( typeof v.title == 'string' ? v.title : '' );
-	self.description = ko.observable( typeof v.desc == 'string' ? v.desc : '' );
+	self.description = ko.observable( typeof v.description == 'string' ? v.description : '' );
 	self.visible = ko.observable( typeof v.visible == 'boolean' ? v.visible : false );
 	self.items = ko.observableArray( [] );
 	if( typeof v.items == 'object' ) {
@@ -247,11 +232,28 @@ logViewModel = function( v ) {
 			self.items.push( new itemViewModel( v.items[ i ] ) );
 		}
 	}
+
+	self.addItem = function() {
+		var ni = new itemViewModel();
+		self.items.push( ni );
+		app.editItem( ni );
+
+	}
+
+	self.moveItem = function( e, d ) {
+		var moveto = $(d.currentTarget).data("moveto");
+		self.items.remove( e );
+		if( "discarded" != self.id() || self.id() != moveto ) {
+			app[ moveto ]().items.push( e );
+		}
+	}
+
 };
 
 appViewModel = function( v ) {
 	var self = this;
 	if( typeof v == 'undefined') { v = {}; };
+	
 	self.activeItem = ko.observable( new itemViewModel() );
 	self.active = ko.observable( new logViewModel( typeof v.active == 'object' ? v.active : undefined ) );
 	self.horizon = ko.observable( new logViewModel( typeof v.horizon == 'object' ? v.horizon: undefined ) );
@@ -259,6 +261,9 @@ appViewModel = function( v ) {
 	self.completed = ko.observable( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
 	self.discarded = ko.observable( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
 	self.valid = ko.observable( new logViewModel( typeof v.valid == 'object' ? v.valid : {} ) );
+
+	self.logs = ko.observableArray([ self.future, self.horizon, self.active, self.valid, self.completed, self.discarded, ] );
+
 	self.activeLogs = ko.computed( function() {
 		var i=0; 
 		i += self.active().visible() ? 1 : 0;
@@ -269,9 +274,9 @@ appViewModel = function( v ) {
 		i += self.valid().visible() ? 1 : 0;
 		return i;
 	});
+
 	self.toggleBoard = function( e, d ) {
-		var alog = this[$(d.currentTarget).data("log")]();
-		alog.visible( alog.visible() ? false : true );
+		e.visible( e.visible() ? false : true );
 	}
 
 	self.save = function() {
@@ -288,54 +293,71 @@ appViewModel = function( v ) {
 		self.valid( new logViewModel( typeof v.valid == 'object' ? v.valid : undefined ) );
 	}
 
-	self.editStory = function( e ) {
-		t = self.activeItem();
-		t.title( e.title() );
+	self.editItem = function( e, d ) {
+		self.activeItem( e );
 		$("#editStory").modal();
 	}
 
-	self.viewStory = function( e ) {
+	self.viewItem = function( e ) {
+	}
+
+	self.removeTag = function( n ) {
+
+	};
+
+	self.expand = function( a, b ) {
+		$( b.currentTarget ).closest(".item").find(".description").addClass("expand").removeClass("shrink");
+	};
+
+	self.shrink = function( a, b ) {
+		$( b.currentTarget ).closest(".item").find(".description").addClass("shrink").removeClass("expand");
 	}
 };
 
-
 config = {
+	"future": {
+		"id":"future",
+		"title": "Future",
+		"description": "Tasks that will need to be done in the future but not the immediate future.",
+		"visible": false
+	},
 	"horizon": {
+		"id":"horizon",
 		"title": "Horizon",
-		"desc": "Task that will be started in the near future.",
+		"description": "Task that will be started in the near future.",
 		"visible": true
 	},
 	"active": {
+		"id":"active",
 		"title": "Active",
-		"desc": "Tasks that are currently being worked on.",
+		"description": "Tasks that are currently being worked on.",
 		"visible": true	
 	},
 	"valid": {
+		"id":"valid",
 		"title": "Valid",
-		"desc": "Completed tasks that the customer needs to verify.",
+		"description": "Completed tasks that the customer needs to verify.",
 		"visible": true
 	},
-	"future": {
-		"title": "Future",
-		"desc": "Tasks that will need to be done in the future but not the immediate future.",
-		"visible": false
-	},
 	"completed": {
+		"id":"completed",
 		"title": "Completed",
-		"desc": "Tasks that have been completed and verified.",
+		"description": "Tasks that have been completed and verified.",
 		"visible": false
 	},
 	"discarded": {
+		"id":"discarded",
 		"title": "Discarded",
-		"desc": "Tasks that have been discarded but not yet deleted. Kept for historical purpose or because they may appear again.",
+		"description": "Tasks that have been discarded but not yet deleted. Kept for historical purpose or because they may appear again.",
 		"visible": false
 	}
 }
 
 $(document).ready( function() {
-	var logs = $(".log");
-	for( i=1; i < logs.length; i++ ) { 
-		$(logs[i]).html( $(logs[0]).html() ); 
+	var log = $(".templates .items");
+	var logs = $("#logs .items");
+	for( i=0; i < logs.length; i++ ) { 
+		$(logs[i]).html( $(log).html() ); 
 	}
 
 	app = new appViewModel( config );
@@ -350,6 +372,9 @@ $(document).ready( function() {
 	ko.applyBindings( app );
 	app.load();
 	$("button[title]").tooltip();
+	//Adjust the top of the logs so that the menu does not cover it up.
+	$("#logs").css("margin-top", $("#appmenu").height() );
+	$('#editStory').on('hide.bs.modal', app.save );
 });
 </script>
 </body></html>
