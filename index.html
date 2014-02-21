@@ -316,7 +316,7 @@ logViewModel = function( v ) {
 	self.items = ko.observableArray( [] );
 	if( typeof v.items == 'object' ) {
 		for( var i=0; i < v.items.length; i++ ) {
-			self.items.push( new itemViewModel( v.items[ i ] ) );
+			self.items.unshift( new itemViewModel( v.items[ i ] ) );
 		}
 	}
 
