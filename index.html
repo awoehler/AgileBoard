@@ -117,7 +117,7 @@ ul.pagination {
 			<ul class="pagination" data-bind="visible: totalPages() > 1">
 				<li><a id="first" title="First Page" href="#" data-bind="click: function() { currentPage(0); }, css: { disabled: currentPage() === 0 }, visible: totalPages() > 10"><span class="glyphicon glyphicon-fast-backward"></span></a>
 				<li><a id="prev" title="Previous Page" href="#" data-bind="click: function (event) { navigate(event) }, css: { disabled: currentPage() === 0 }, visible: totalPages() > 10"><span class="glyphicon glyphicon-backward"></span></a></li>
-					<!-- ko foreach: ko.utils.range(1, totalPages) -->
+					<!-- ko foreach: ko.utils.range(1, filteredPages) -->
 					<li>
 						<a href="#" title="View page" data-bind="click: function() { $parent.currentPage($data-1) }, css: { on: $data === $parent.currentPage()}"><span data-bind="text: $data"></span></a>
 					</li>
@@ -339,6 +339,7 @@ logViewModel = function( v ) {
 	}
 
 	self.filterTerm = ko.observable("");
+	self.filteredPages = ko.observable(0);
 
 	self.currentPage = ko.observable(0);
 	self.pageSize = ko.observable(5);
@@ -389,6 +390,7 @@ logViewModel = function( v ) {
 				}
 			}
 		}
+		self.filteredPages( Math.ceil( rv.length / self.pageSize() ) );
 		return rv.slice( self.currentPage() * self.pageSize() ,(self.pageSize() * self.currentPage() )+self.pageSize() );
 	}, this);
 };
