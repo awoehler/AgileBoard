@@ -12,6 +12,8 @@ div.item {
 div.container {
 	width: 100%;
 }
+.item {
+}
 .item .description.expand {
 	max-height: 20em;
 	overflow-y: auto;
@@ -125,8 +127,8 @@ ul.pagination {
 			</ul>
 
 			<div class="items" data-bind="attr{ 'data-id': id() }, foreach: filteredItems">
-				<div class="items">
-					<div class="container item">
+				<div class="item">
+					<div class="container">
 						<div class="row">
 							<div class="col-md-12 title" data-bind="text: title">.title</div>
 						</div>
