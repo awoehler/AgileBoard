@@ -441,13 +441,19 @@ appViewModel = function( v ) {
 	}
 
 	self.load = function() {
-		var v = JSON.parse( localStorage.getItem('agileboard') );
-		self.active( new logViewModel( typeof v.active == 'object' ? v.active : undefined ) );
-		self.horizon( new logViewModel( typeof v.horizon == 'object' ? v.horizon: undefined ) );
-		self.future( new logViewModel( typeof v.future == 'object' ? v.future : undefined ) );
-		self.completed( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
-		self.discarded( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
-		self.valid( new logViewModel( typeof v.valid == 'object' ? v.valid : undefined ) );
+		try {
+			var d = localStorage.getItem('agileboard');
+			if( d == null ) return;
+			var v = JSON.parse( d );
+			self.active( new logViewModel( typeof v.active == 'object' ? v.active : undefined ) );
+			self.horizon( new logViewModel( typeof v.horizon == 'object' ? v.horizon: undefined ) );
+			self.future( new logViewModel( typeof v.future == 'object' ? v.future : undefined ) );
+			self.completed( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
+			self.discarded( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
+			self.valid( new logViewModel( typeof v.valid == 'object' ? v.valid : undefined ) );
+		} catch( e ) {
+			alert('An error occured while trying to import the data. ' + e );
+		}
 	}
 
 	self.exportData = function() {
