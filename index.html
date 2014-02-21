@@ -73,7 +73,7 @@ ul.pagination {
 		</div>
 
 		<ul class="nav navbar-nav" data-bind="foreach: logs()">
-			<li><a class="btn btn-xs" title="Show/Hide this log" data-bind="click: $parent.toggleBoard, text: title() "></a></li>
+			<li><a class="btn btn-xs" title="Show/Hide this log"><span data-bind="click: $parent.toggleBoard, text: title() "></span> <span class="badge" data-placement="right" title="Number of items in this log." data-bind="visible: items().length > 0, text: items().length"></span></a> </li>
 		</ul>
 		<ul class="nav navbar-nav">
 			<li><a class="btn btn-default btn-xs" data-toggle="modal" data-target="#exportimport" data-bind="click: exportData">Import/Export</a></li>
