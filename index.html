@@ -118,8 +118,8 @@ ul.pagination {
 				<li><a id="first" title="First Page" href="#" data-bind="click: function() { currentPage(0); }, css: { disabled: currentPage() === 0 }, visible: totalPages() > 10"><span class="glyphicon glyphicon-fast-backward"></span></a>
 				<li><a id="prev" title="Previous Page" href="#" data-bind="click: function (event) { navigate(event) }, css: { disabled: currentPage() === 0 }, visible: totalPages() > 10"><span class="glyphicon glyphicon-backward"></span></a></li>
 					<!-- ko foreach: ko.utils.range(1, filteredPages) -->
-					<li>
-						<a href="#" title="View page" data-bind="click: function() { $parent.currentPage($data-1) }, css: { on: $data === $parent.currentPage()}"><span data-bind="text: $data"></span></a>
+					<li data-bind="css: { 'active': $data == ($parent.currentPage() + 1)}">
+						<a href="#" title="View page" data-bind="click: function() { $parent.currentPage($data-1) }"><span data-bind="text: $data"></span></a>
 					</li>
 					<!-- /ko -->
 				<li><a id="next" title="Next Page" href="#" data-bind="click: function (event) { navigate(event) }, css: { disabled: currentPage() === totalPages() - 1 }, visible: totalPages() > 10 "><span class="glyphicon glyphicon-forward"></span></a></li>
