@@ -73,6 +73,9 @@ ul.pagination {
 		<ul class="nav navbar-nav" data-bind="foreach: logs()">
 			<li><a class="btn btn-xs" title="Show/Hide this log" data-bind="click: $parent.toggleBoard, text: title() "></a></li>
 		</ul>
+		<ul class="nav navbar-nav">
+			<li><a class="btn btn-default btn-xs" data-toggle="modal" data-target="#exportimport" data-bind="click: exportData">Import/Export</a></li>
+		</ul>
 
 		<div class="col-xs-12 col-sm-3" id="globalsearch">
 			<div class="input-group input-group-sm">
@@ -229,6 +232,28 @@ ul.pagination {
 <div id="deleteStory">
 </div>
 
+<div id="exportimport" class="modal fade" role="dialog" tabindex="-1" class="modal fade" aria-labelledby="export" aria-hidden="true" >
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Export</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<p>To export your data copy it from the text area below.</p>
+					<div class="form-group">
+						<textarea name="data" class="form-control" placeholder="" ></textarea>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: importData">Import</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 
 <script>
@@ -421,6 +446,14 @@ appViewModel = function( v ) {
 		self.completed( new logViewModel( typeof v.completed == 'object' ? v.completed : undefined ) );
 		self.discarded( new logViewModel( typeof v.discarded == 'object' ? v.discarded : undefined ) );
 		self.valid( new logViewModel( typeof v.valid == 'object' ? v.valid : undefined ) );
+	}
+
+	self.exportData = function() {
+		$("#exportimport textarea[name=data]").val( localStorage.getItem('agileboard') );
+	}
+	self.importData = function() {
+		localStorage.setItem('agileboard', $("#exportimport textarea[name=data]").val() );
+		self.load();
 	}
 
 	self.editItem = function( e, d ) {
