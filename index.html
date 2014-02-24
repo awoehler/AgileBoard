@@ -106,11 +106,34 @@ ul.pagination {
 	<div class="row" data-bind="foreach: logs()">
 		<div class="" data-bind="visible: visible, css: { 'col-md-2': $parent.activeLogs() > 4, 'col-md-3': $parent.activeLogs() == 4, 'col-md-4': $parent.activeLogs() == 3, 'col-md-6': $parent.activeLogs() == 2, 'col-md-12': $parent.activeLogs() == 1} ">
 			<a data-bind="attr: { name: id }"></a>
-			<h2>
-				<span data-bind="text: title"></span> 
-				<button data-bind="visible: id() != 'discarded', click: addItem" title="Add a new item to this log" type="button" class="btn btn-default btn-mini"> <span class="glyphicon glyphicon-plus"></span></button>
-			</h2>
-			<p data-bind="text: description, visible: items().length == 0 "></p>
+
+<!-- Split button -->
+			<div class="col-xs-10">
+				<h2 >
+					<span data-bind="text: title"></span>
+					<button data-bind="visible: id() != 'discarded', click: addItem" title="Add a new item to this log" type="button" class="btn btn-default btn-mini"> <span class="glyphicon glyphicon-plus"></span></button>
+				</h2>
+			</div>
+			<div class="col-xs-2">
+				<div class="btn-group pull-right">
+					<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-sort"></span></button>
+					<ul class="dropdown-menu" role="menu">
+						<li class="disabled"><a class="">Sort by</a></li>
+						<li class="divider"></li>
+						<li data-bind="css: { active: sortby() == 'value' }"><a data-bind="click: sort" data-id="value">Value (1..9)</a></li>
+						<li data-bind="css: { active: sortby() == 'valueinv' }"><a data-bind="click: sort" data-id="valueinv">Value (9..1)</a></li>
+						<li data-bind="css: { active: sortby() == 'duedate' }"><a data-bind="click: sort" data-id="duedate">Due Date (1..9)</a></li>
+						<li data-bind="css: { active: sortby() == 'duedateinv' }"><a data-bind="click: sort" data-id="duedateinv">Due Date (9..1)</a></li>
+						<li data-bind="css: { active: sortby() == 'points' }"><a data-bind="click: sort" data-id="points">Points (1..9)</a></li>
+						<li data-bind="css: { active: sortby() == 'pointsinv' }"><a data-bind="click: sort" data-id="pointsinv">Points (9..1)</a></li>
+						<li data-bind="css: { active: sortby() == 'title' }"><a data-bind="click: sort" data-id="title">Title (a..z)</a></li>
+						<li data-bind="css: { active: sortby() == 'titleinv' }"><a data-bind="click: sort" data-id="titleinv">Title (z..a)</a></li>
+						<li data-bind="css: { active: sortby() == 'priority' }"><a data-bind="click: sort" data-id="priority">Priority (a..z)</a></li>
+						<li data-bind="css: { active: sortby() == 'priorityinv' }"><a data-bind="click: sort" data-id="priorityinv">Priority (a..z)</a></li>
+					</ul>
+				</div>
+			</div>
+			<p style="clear: both;" data-bind="text: description, visible: items().length == 0 "></p>
 
 			<div class="row filter" style="margin-bottom: 0.5em;" data-bind="visible: items().length > 1">
 				<div class="col-xs-10">
@@ -308,7 +331,7 @@ itemViewModel = function( v ) {
 			self.tags.removeAll();
 			var newtags = value.split(",");
 			for( var i=0; i < newtags.length; i++ ) {
-				self.tags.push( newtags[i] );
+				self.tags.push( newtags[i].toLowerCase() );
 			}
 		},
 		owner: this
@@ -330,6 +353,7 @@ logViewModel = function( v ) {
 	self.description = ko.observable( typeof v.description == 'string' ? v.description : '' );
 	self.visible = ko.observable( typeof v.visible == 'boolean' ? v.visible : false );
 	self.items = ko.observableArray( [] );
+	self.sortby = ko.observable('value');
 	if( typeof v.items == 'object' ) {
 		for( var i=0; i < v.items.length; i++ ) {
 			self.items.unshift( new itemViewModel( v.items[ i ] ) );
@@ -388,6 +412,10 @@ logViewModel = function( v ) {
 		}
 	});
 
+	self.sort = function( d, e ) {
+		self.sortby( $(e.currentTarget).data("id") );
+	}
+
 	self.filteredItems = ko.computed(function() {
 		var all = self.items(), rv = [];
 		for (var i = 0; i < all.length; i++) {
@@ -397,12 +425,50 @@ logViewModel = function( v ) {
 					all[i].description().toLowerCase().indexOf( terms[j] ) > -1 ||
 					all[i].duedate().indexOf( terms[j] ) > -1 ||
 					all[i].priority().toLowerCase().indexOf( terms[j] ) > -1 ||
-					all[i].link().toLowerCase().indexOf( terms[j] ) > -1 ||	
-					all[i].tags().join().toLowerCase().indexOf( terms[j] ) > -1
+					all[i].link().indexOf( terms[j] ) > -1 ||	
+					all[i].tags().join().indexOf( terms[j] ) > -1
 					) {
 					rv.push(all[i]);
 				}
 			}
+		}
+		switch( self.sortby() ) {
+			case 'pointsinv':
+				rv.sort(function( left, right ) { return parseInt( left.points() ) == parseInt( right.points() ) ? 0 : ( parseInt( left.points() ) < parseInt( right.points() ) ? 1 : -1) });
+				break;
+			case 'points':
+				rv.sort(function( left, right ) { return parseInt( left.points() ) == parseInt( right.points() ) ? 0 : ( parseInt( left.points() ) < parseInt( right.points() ) ? -1 : 1) });
+				break;
+			case 'titleinv':
+				rv.sort(function( left, right ) { return left.title().toLowerCase() == right.title().toLowerCase() ? 0 : (left.title().toLowerCase() < right.title().toLowerCase() ? 1 : -1) });
+				break;
+			case 'title':
+				rv.sort(function( left, right ) { return left.title().toLowerCase() == right.title().toLowerCase() ? 0 : (left.title().toLowerCase() < right.title().toLowerCase() ? -1 : 1) });
+				break;
+			case 'priorityinv':
+				rv.sort(function( left, right ) { return left.priorityinv().toLowerCase() == right.priorityinv().toLowerCase() ? 0 : (left.priorityinv().toLowerCase() < right.priorityinv().toLowerCase() ? 1 : -1) });
+				break;
+			case 'priority':
+				rv.sort(function( left, right ) { return left.priority().toLowerCase() == right.priority().toLowerCase() ? 0 : (left.priority().toLowerCase() < right.priority().toLowerCase() ? -1 : 1) });
+				break;
+			case 'duedateinv':
+				rv.sort(function( left, right ) { 
+					left = new Date( left.duedate() ).getTime();
+					right = new Date( right.duedate() ).getTime();
+					return left == right ? 0 : (left < right ? 1 : -1) });
+				break;
+			case 'duedate':
+				rv.sort(function( left, right ) { 
+					left = new Date( left.duedate() ).getTime();
+					right = new Date( right.duedate() ).getTime();
+					return left == right ? 0 : (left < right ? -1 : 1) });
+				break;
+			case 'valueinv':
+				rv.sort(function( left, right ) { return parseInt( left.value() ) == parseInt( right.value() ) ? 0 : ( parseInt( left.value() ) < parseInt( right.value() ) ? 1 : -1) })
+				break;
+			case 'value':
+			default:
+				rv.sort(function( left, right ) { return parseInt( left.value() ) == parseInt( right.value() ) ? 0 : ( parseInt( left.value() ) < parseInt( right.value() ) ? -1 : 1) })
 		}
 		self.filteredPages( Math.ceil( rv.length / self.pageSize() ) );
 		return rv.slice( self.currentPage() * self.pageSize() ,(self.pageSize() * self.currentPage() )+self.pageSize() );
