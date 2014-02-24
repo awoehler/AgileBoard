@@ -144,7 +144,7 @@ ul.pagination {
 							<div class="col-md-12 title" data-bind="text: title">.title</div>
 						</div>
 						<div class="row">
-							<div class="col-xs-6">
+							<div class="col-xs-5">
 								<button type="button" class="btn btn-default btn-xs" title="Edit Story" data-bind="click: $root.editItem"><span class="glyphicon glyphicon-edit"></span></button><div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="Move to another log."><span class="glyphicon glyphicon-transfer" title="Move to another log"></span></button><ul class="dropdown-menu" role="menu">
 										<li><a href="#" data-moveto="active" data-bind="click: $parent.moveItem">Active</a></li>
 										<li><a href="#" data-moveto="horizon" data-bind="click: $parent.moveItem">Horizon</a></li>
@@ -154,8 +154,10 @@ ul.pagination {
 										<!-- <li><a href="#" data-id="discarded" data-bind="click: $parent.moveItem">Discarded</a></li> -->
 									</ul></div><button type="button" class="btn btn-default btn-xs" data-bind="visible: expanded() == false, click: $root.expand" title="Expand"><span class="glyphicon glyphicon-resize-full"></span></button><button type="button" class="btn btn-default btn-xs" data-bind="visible: expanded() == true, click: $root.shrink" title="Collapse"><span class="glyphicon glyphicon-resize-small"></span></button><button type="button" class="btn btn-default btn-xs" data-moveto="discarded" data-bind="click: $parent.moveItem" title="Move to Discarded"><span class="glyphicon glyphicon-trash"></span></button>
 							</div>
-							<div class="col-xs-3 duedate text-center" data-bind="text: duedate" data-toggle="tooltip" title="Due Date">.duedate</div>
-							<div class="col-xs-3 priority text-right">
+							<div class="col-xs-5 duedate text-center" data-bind="text: duedate" data-toggle="tooltip" title="Due Date">.duedate</div>
+							<div class="col-xs-1 value" data-bind="text: value" title="Value"></div>
+							<div class="col-xs-1 points" data-bind="text: points" title="Points"></div>
+							<div class="col-xs-3 priority text-right pull-right">
 								<span class="label label-default" data-bind="text: priority, css: { 'label-danger' : priority().toLowerCase() == 'high', 'label-success' : priority().toLowerCase() == 'normal', 'label-info' : priority().toLowerCase() == 'low'}">.priority .badge</span> 
 							</div>
 						</div>
@@ -211,6 +213,17 @@ ul.pagination {
 					<div class="form-group">
 						<input type="text" name="priority" class="form-control" placeholder="Low, Normal, High" data-bind="value: priority">
 					</div>
+					<div class="col-xs-5">
+						<div class="form-group">
+							<input type="text" name="value" class="form-control" placeholder="Value" data-bind="value: value">
+						</div>
+					</div>
+					<div class="col-xs-offset-1 col-xs-5">
+						<div class="form-group">
+							<input type="text" name="points" class="form-control" placeholder="Points" data-bind="value: points">
+						</div>
+					</div>
+
 					<div class="form-group">
 						<input type="url" name="link" class="form-control" placeholder="http://www.site.com" data-bind="value: link">
 					</div>
@@ -269,6 +282,8 @@ itemViewModel = function( v ) {
 	if( typeof v == 'undefined') { v = {}; };
 	self.id = typeof v.id == "number" ? v.id : 0;
 	self.rank = ko.observable( typeof v.rank == "string" ? v.rank : '' );
+	self.points = ko.observable( typeof v.points == "string" ? v.points : '' );
+	self.value = ko.observable( typeof v.value == "string" ? v.value : '' );
 	self.title = ko.observable( typeof v.title == "string" ? v.title : '' );
 	self.duedate = ko.observable( typeof v.duedate == "string" ? v.duedate : '' );
 	self.priority = ko.observable( typeof v.priority == "string" ? v.priority : '' );
