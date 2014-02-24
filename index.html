@@ -145,26 +145,14 @@ ul.pagination {
 						</div>
 						<div class="row">
 							<div class="col-xs-6">
-								<button type="button" class="btn btn-default btn-xs" title="View Story" data-bind="click: $parent.viewItem"><span class="glyphicon glyphicon-info-sign"></span></button>&nbsp;
-								<button type="button" class="btn btn-default btn-xs" title="Edit Story" data-bind="click: $root.editItem"><span class="glyphicon glyphicon-edit"></span></button>&nbsp;
-								<!-- <button type="button" class="btn btn-default btn-xs" title="Move to Discarded"><span class="glyphicon glyphicon-trash"></span></button> -->
-								<div class="btn-group">
-									<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="Move to another log.">
-										<span class="glyphicon glyphicon-transfer" title="Move to another log">    
-										</span>
-									</button>
-									<ul class="dropdown-menu" role="menu">
+								<button type="button" class="btn btn-default btn-xs" title="Edit Story" data-bind="click: $root.editItem"><span class="glyphicon glyphicon-edit"></span></button><div class="btn-group"><button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" title="Move to another log."><span class="glyphicon glyphicon-transfer" title="Move to another log"></span></button><ul class="dropdown-menu" role="menu">
 										<li><a href="#" data-moveto="active" data-bind="click: $parent.moveItem">Active</a></li>
 										<li><a href="#" data-moveto="horizon" data-bind="click: $parent.moveItem">Horizon</a></li>
 										<li><a href="#" data-moveto="valid" data-bind="click: $parent.moveItem">Valid</a></li>
 										<li><a href="#" data-moveto="completed" data-bind="click: $parent.moveItem">Completed</a></li>
 										<li><a href="#" data-moveto="future" data-bind="click: $parent.moveItem">Future</a></li>
 										<!-- <li><a href="#" data-id="discarded" data-bind="click: $parent.moveItem">Discarded</a></li> -->
-									</ul>
-								</div>&nbsp;
-								<button type="button" class="btn btn-default btn-xs" data-bind="click: $root.expand" title="Expand"><span class="glyphicon glyphicon-resize-full"></span></button>&nbsp;
-								<button type="button" class="btn btn-default btn-xs" data-bind="click: $root.shrink" title="Collapse"><span class="glyphicon glyphicon-resize-small"></span></button>&nbsp;
-								<button type="button" class="btn btn-default btn-xs" data-moveto="discarded" data-bind="click: $parent.moveItem" title="Move to Discarded"><span class="glyphicon glyphicon-trash"></span></button>&nbsp;
+									</ul></div><button type="button" class="btn btn-default btn-xs" data-bind="visible: expanded() == false, click: $root.expand" title="Expand"><span class="glyphicon glyphicon-resize-full"></span></button><button type="button" class="btn btn-default btn-xs" data-bind="visible: expanded() == true, click: $root.shrink" title="Collapse"><span class="glyphicon glyphicon-resize-small"></span></button><button type="button" class="btn btn-default btn-xs" data-moveto="discarded" data-bind="click: $parent.moveItem" title="Move to Discarded"><span class="glyphicon glyphicon-trash"></span></button>
 							</div>
 							<div class="col-xs-3 duedate text-center" data-bind="text: duedate" data-toggle="tooltip" title="Due Date">.duedate</div>
 							<div class="col-xs-3 priority text-right">
@@ -188,7 +176,7 @@ ul.pagination {
 							<div class="col-md-12 tags" data-bind="foreach: tags()">
 								<span class="badge tag" data-bind="text: $data">.tags .tag</span>
 							</div>
-							<div class="col-md-12 description shrink"><strong>Description:</strong> <span class="content" data-bind="html: description">Description Content.....</span></div>
+							<div class="col-md-12 description" data-bind="css: { 'shrink': expanded() == false , 'expanded': expanded() == true}"><strong>Description:</strong> <span class="content" data-bind="html: description">Description Content.....</span></div>
 						</div>
 					</div>
 				</div>
@@ -482,20 +470,17 @@ appViewModel = function( v ) {
 		$("#editStory").modal();
 	}
 
-	self.viewItem = function( e ) {
-	}
-
 	self.removeTag = function( n ) {
 
 	};
 
-	self.expand = function( a, b ) {
-		$( b.currentTarget ).closest(".item").find(".description").addClass("expand").removeClass("shrink");
+	self.expand = function( e ) {
+		e.expanded( true );
 	};
 
-	self.shrink = function( a, b ) {
-		$( b.currentTarget ).closest(".item").find(".description").addClass("shrink").removeClass("expand");
-	}
+	self.shrink = function( e ) {
+		e.expanded( false );
+	};
 };
 
 config = {
