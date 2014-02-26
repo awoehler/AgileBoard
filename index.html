@@ -446,7 +446,7 @@ logViewModel = function( v ) {
 				rv.sort(function( left, right ) { return left.title().toLowerCase() == right.title().toLowerCase() ? 0 : (left.title().toLowerCase() < right.title().toLowerCase() ? -1 : 1) });
 				break;
 			case 'priorityinv':
-				rv.sort(function( left, right ) { return left.priorityinv().toLowerCase() == right.priorityinv().toLowerCase() ? 0 : (left.priorityinv().toLowerCase() < right.priorityinv().toLowerCase() ? 1 : -1) });
+				rv.sort(function( left, right ) { return left.priority().toLowerCase() == right.priority().toLowerCase() ? 0 : (left.priorityinv().toLowerCase() < right.priority().toLowerCase() ? 1 : -1) });
 				break;
 			case 'priority':
 				rv.sort(function( left, right ) { return left.priority().toLowerCase() == right.priority().toLowerCase() ? 0 : (left.priority().toLowerCase() < right.priority().toLowerCase() ? -1 : 1) });
