@@ -144,7 +144,7 @@ ul.pagination {
 					</div>
 				</div>
 				<div class="col-xs-2 pagesize">
-					<select data-toggle="tooltip" title="Number of items to display" class="form-control input-sm" data-bind="value: pageSize, options: [5,10,15,20]">
+					<select data-toggle="tooltip" title="Number of items to display" class="form-control input-sm" data-bind="value: pageSize, options: pageSizes">
 					</select>
 				</div>
 			</div>
@@ -382,6 +382,7 @@ logViewModel = function( v ) {
 
 	self.currentPage = ko.observable(0);
 	self.pageSize = ko.observable(5);
+	self.pageSizes = ko.observableArray([5,10,15,20,50,100]);
 	self.navigate = function (e) {
 		var el = e.target;
 		if (el.id === "next") {
